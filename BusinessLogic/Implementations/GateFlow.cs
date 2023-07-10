@@ -4,6 +4,8 @@ using GateFlowDashboardAPI.BusinessLogic.Contract;
 using GateFlowDashboardAPI.DataAccess.IRepository;
 using GateFlowDashboardAPI.Models.Response;
 using Microsoft.EntityFrameworkCore;
+using GateFlowDashboardAPI.EFCore;
+using GateFlowDashboardAPI.EFCore.Models;
 
 public class GateFlow : IGateFlow
 {
@@ -15,15 +17,19 @@ public class GateFlow : IGateFlow
         _sensorEventRepository = sensorEventRepository;
     }
 
-    public async Task<IEnumerable<SensorEventResponse>> GetGateFlowSummary()
+    public async Task<IEnumerable<SensorEventResponse>> GetGateFlowSummary(Dictionary<string, List<string>> filterParams)
     {
-        return await _sensorEventRepository.GetAllSensorEvents().GroupBy(e => new { e.Gate, e.Type })
-    .Select(g => new SensorEventResponse
-    {
-        Gate = g.Key.Gate,
-        Type = g.Key.Type,
-        NumberOfPeople = g.Count()
-    })
-    .ToListAsync();
+        var filteredExpression = DynamicFilterGenerator.GenerateFilterExpression<SensorEvent>(filterParams);
+        return await _sensorEventRepository.GetAllSensorEvents()
+                                           .Where(filteredExpression)
+                                           .GroupBy(e => new { e.Gate, e.Type })
+                                           .Select(g => new SensorEventResponse
+                                           {
+                                               Gate = g.Key.Gate,
+                                               Type = g.Key.Type,
+                                               NumberOfPeople = g.Count(),
+                                               CreatedDateFrom = g.Min(e => e.CreatedDate),
+                                               CreatedDateTo = g.Max(e => e.CreatedDate)
+                                           }).ToListAsync();
     }
 }

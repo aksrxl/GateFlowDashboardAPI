@@ -19,8 +19,8 @@ public class GateFlowDashBoard : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetGateFlowSummary")]
-    public async Task<IEnumerable<SensorEventResponse>> Get()
+    public async Task<IEnumerable<SensorEventResponse>> Get([FromQuery] Dictionary<string, List<string>> filterParams)
     {
-        return await _gateFlow.GetGateFlowSummary();
+        return await _gateFlow.GetGateFlowSummary(filterParams);
     }
 }
