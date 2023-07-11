@@ -18,6 +18,13 @@ public static class DynamicFilterGenerator
                 string columnName = filterParam.Key;
                 List<string> filterValues = filterParam.Value;
 
+                var propertyName = typeof(T).GetProperty(columnName);
+                if (propertyName == null)
+                {
+                    // Skip the filter if the column name is not valid
+                   throw new InvalidOperationException($"Invalid column name {columnName}");
+                }
+
                 var property = Expression.Property(parameter, columnName);
 
                 if (typeof(DateTime).IsAssignableFrom(property.Type) && filterValues.Count == 2)

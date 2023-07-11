@@ -4,21 +4,29 @@ using GateFlowDashboardAPI.EFCore;
 using Microsoft.EntityFrameworkCore;
 using GateFlowDashboardAPI.DataAccess.IRepository;
 using GateFlowDashboardAPI.DataAccess.Repository;
+using System.Reflection;
+using GateFlowDashboardAPI.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+
+builder.Services.AddControllers(c=>c.Filters.Add<GlobalExceptionFilter>());
 builder.Services.AddDbContext<ApiContext>(x => x.UseInMemoryDatabase("MyDatabase"));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+builder.Services.AddSwaggerGen(a=>a.IncludeXmlComments(xmlPath));
 builder.Services.AddScoped<IGateFlow, GateFlow>();
 builder.Services.AddScoped<ISensorEventRepository,SensorEventRepository>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

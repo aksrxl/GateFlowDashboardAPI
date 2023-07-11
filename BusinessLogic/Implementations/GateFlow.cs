@@ -6,6 +6,7 @@ using GateFlowDashboardAPI.Models.Response;
 using Microsoft.EntityFrameworkCore;
 using GateFlowDashboardAPI.EFCore;
 using GateFlowDashboardAPI.EFCore.Models;
+using GateFlowDashboardAPI.Enums;
 
 public class GateFlow : IGateFlow
 {
@@ -31,5 +32,15 @@ public class GateFlow : IGateFlow
                                                CreatedDateFrom = g.Min(e => e.CreatedDate),
                                                CreatedDateTo = g.Max(e => e.CreatedDate)
                                            }).ToListAsync();
+    }
+
+    public async Task<string> GenerateRecordForSimulation(string gate, string type, DateTime dateTime){
+        var sensorEvent = new SensorEvent{
+            Id = Guid.NewGuid().ToString(),
+            Gate = gate,
+            Type = type,
+            CreatedDate = dateTime
+        };
+        return await _sensorEventRepository.SaveSensorEvent(sensorEvent);
     }
 }
