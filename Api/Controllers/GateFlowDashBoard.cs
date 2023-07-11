@@ -20,7 +20,7 @@ public class GateFlowDashBoard : ControllerBase
     /// <summary>
     /// Gets the list of sensor events grouped by gate and type
     /// </summary>
-    /// <param name="filterParams">filter param eg. {"gate":["Gate A","Gate B","Gate C"],"type":["Leave","Enter"],"CreatedDate":["2023-07-06","2023-07-07"]}</param>
+    /// <param name="filterParams">filter param eg. {"Gate":["Gate A","Gate B","Gate C"],"Type":["Leave","Enter"],"CreatedDate":["2023-07-06","2023-07-07"]}</param>
     /// <returns></returns>
     [HttpGet("/GetGateFlowSummary")]
     public async Task<ActionResult<IEnumerable<SensorEventResponse>>> Get([FromQuery] Dictionary<string, List<string>> filterParams)
