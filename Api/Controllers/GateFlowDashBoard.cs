@@ -4,15 +4,19 @@ namespace GateFlowDashboardAPI.Controllers
     using GateFlowDashboardAPI.Extensions;
     using GateFlowDashboardAPI.Models.Response;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using static Constants;
 
     [ApiController]
     [Route("[controller]/[action]")]
     public class GateFlowDashBoard : ControllerBase
     {
         private readonly IGateFlow _gateFlow;
-        public GateFlowDashBoard(IGateFlow gateFlow)
+        private readonly ILogger<GateFlowDashBoard> _logger;
+        public GateFlowDashBoard(IGateFlow gateFlow, ILogger<GateFlowDashBoard> logger)
         {
             _gateFlow = gateFlow;
+            _logger = logger;
         }
 
         /// <summary>
@@ -23,7 +27,10 @@ namespace GateFlowDashboardAPI.Controllers
         [HttpGet("/GetGateFlowSummary")]
         public async Task<ActionResult<IEnumerable<SensorEventResponse>>> Get([FromQuery] Dictionary<string, List<string>> filterParams)
         {
-            var resultSet = await _gateFlow.GetGateFlowSummary(filterParams);
+            var correlationId = Guid.NewGuid().ToString(); // Generate new or retriev from the request
+            _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Invoked GetGateFlowSummary Endpoint.");
+            var resultSet = await _gateFlow.GetGateFlowSummary(filterParams, correlationId);
+            _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Invoking GetGateFlowSummary Endpoint Finished.");
             return Ok(resultSet);
         }
 
@@ -39,7 +46,10 @@ namespace GateFlowDashboardAPI.Controllers
         {
             gate.Required(nameof(gate));
             type.Required(nameof(type));
-            var id = await _gateFlow.GenerateRecordForSimulation(gate, type, dateTime);
+            var correlationId = Guid.NewGuid().ToString(); // Generate new or retriev from the request
+            _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Invoked GenerateRecordForSimulation Endpoint.");
+            var id = await _gateFlow.GenerateRecordForSimulation(gate, type, dateTime, correlationId);
+            _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Finished GetGateFlowSummary Endpoint Finished.");
             return Ok(id);
         }
     }

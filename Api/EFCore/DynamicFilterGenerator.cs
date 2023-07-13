@@ -1,12 +1,14 @@
 namespace GateFlowDashboardAPI.EFCore
 {
+    using GateFlowDashboardAPI.BusinessLogic.Implementations;
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+    using static Constants;
 
     public static class DynamicFilterGenerator
     {
-        public static Expression<Func<T, bool>> GenerateFilterExpression<T>(Dictionary<string, List<string>> filterParams)
+        public static Expression<Func<T, bool>> GenerateFilterExpression<T>(Dictionary<string, List<string>> filterParams, string correlationId, ILogger<GateFlow> _logger)
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             Expression filterExpression = null;
@@ -18,7 +20,13 @@ namespace GateFlowDashboardAPI.EFCore
                     string columnName = filterParam.Key;
                     List<string> filterValues = filterParam.Value;
 
-                    var propertyName = typeof(T).GetProperty(columnName) ?? throw new InvalidOperationException($"Invalid column name {columnName}");
+                    var propertyName = typeof(T).GetProperty(columnName);
+                    if (propertyName == null)
+                    {
+                        var message = $"Invalid column name {columnName}";
+                        _logger.LogError(DefaultLogger, correlationId, DateTime.UtcNow, message);
+                        throw new InvalidOperationException(message);
+                    }
                     var property = Expression.Property(parameter, columnName);
 
                     if (typeof(DateTime).IsAssignableFrom(property.Type) && filterValues.Count == 2)
@@ -51,7 +59,6 @@ namespace GateFlowDashboardAPI.EFCore
                 filterExpression = Expression.Constant(true);
 
             var lambda = Expression.Lambda<Func<T, bool>>(filterExpression, parameter);
-
             return lambda;
         }
     }

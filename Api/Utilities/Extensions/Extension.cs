@@ -1,6 +1,5 @@
 namespace GateFlowDashboardAPI.Extensions
 {
-
     public static class Extension
     {
         public static void Required<T>(this T argument, string argumentName)

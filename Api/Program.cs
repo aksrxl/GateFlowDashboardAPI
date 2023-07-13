@@ -13,6 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(c => c.Filters.Add<GlobalExceptionFilter>());
 builder.Services.AddDbContext<ApiContext>(x => x.UseInMemoryDatabase("MyDatabase"));
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddLogging(x =>
+{
+    x.ClearProviders();
+    x.AddConsole();
+});
 
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
