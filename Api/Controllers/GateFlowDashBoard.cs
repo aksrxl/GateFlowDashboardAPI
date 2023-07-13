@@ -1,6 +1,7 @@
 namespace GateFlowDashboardAPI.Controllers
 {
     using GateFlowDashboardAPI.BusinessLogic.Contract;
+    using GateFlowDashboardAPI.Enums;
     using GateFlowDashboardAPI.Extensions;
     using GateFlowDashboardAPI.Models.Response;
     using Microsoft.AspNetCore.Mvc;
@@ -44,9 +45,11 @@ namespace GateFlowDashboardAPI.Controllers
         [HttpPost("/GenerateRecordForSimulation/gate/type/{dateTime}")]
         public async Task<ActionResult<string>> Post(string gate, string type, DateTime dateTime)
         {
+            var correlationId = Guid.NewGuid().ToString(); // Generate new or retriev from the request
             gate.Required(nameof(gate));
             type.Required(nameof(type));
-            var correlationId = Guid.NewGuid().ToString(); // Generate new or retriev from the request
+            type.IsValidEnumValue<Type, GateFlowDashBoard>(_logger, correlationId);
+
             _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Invoked GenerateRecordForSimulation Endpoint.");
             var id = await _gateFlow.GenerateRecordForSimulation(gate, type, dateTime, correlationId);
             _logger.LogInformation(DefaultLogger, correlationId, DateTime.UtcNow, "Finished GetGateFlowSummary Endpoint Finished.");
