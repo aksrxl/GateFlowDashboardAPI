@@ -1,13 +1,13 @@
 namespace GateFlowDashboardAPI.EFCore
 {
-        using GateFlowDashboardAPI.EFCore.Models;
-        using GateFlowDashboardAPI.Enums;
+    using GateFlowDashboardAPI.EFCore.Models;
+    using GateFlowDashboardAPI.Enums;
 
-        public class SeedGenerator
+    public class SeedGenerator
+    {
+        public void SeedData(ApiContext context)
         {
-                public void SeedData(ApiContext context)
-                {
-                        var sensorEvents = new List<SensorEvent>{
+            var sensorEvents = new List<SensorEvent>{
                                 new SensorEvent
                                 {
                                         Id = Guid.NewGuid().ToString(),
@@ -1162,8 +1162,8 @@ namespace GateFlowDashboardAPI.EFCore
                                         CreatedDate = DateTime.Now
                                 }
 };
-                        context.SensorEvent.AddRange(sensorEvents);
-                        context.SaveChanges();
-                }
+            context.SensorEvent.AddRange(sensorEvents);
+            context.SaveChanges();
         }
+    }
 }

@@ -1,21 +1,22 @@
-namespace GateFlowDashboardAPI.Extensions;
-
-public static class Extension
+namespace GateFlowDashboardAPI.Extensions
 {
 
-    public static void Required(this string input, string paramName)
+    public static class Extension
     {
-        if (string.IsNullOrWhiteSpace(input))
+        public static void Required<T>(this T argument, string argumentName)
         {
-            throw new InvalidOperationException($"{paramName} is required.");
+            if (argument == null)
+            {
+                throw new InvalidOperationException($"{argumentName} is required.");
+            }
         }
-    }
 
-    public static void CheckDateFormat(this string input)
-    {
-        if (!DateTime.TryParse(input, out var _))
+        public static void CheckDateFormat(this string input)
         {
-            throw new InvalidOperationException($"{input} is not a valid date");
+            if (!DateTime.TryParse(input, out var _))
+            {
+                throw new InvalidOperationException($"{input} is not a valid date");
+            }
         }
     }
 }

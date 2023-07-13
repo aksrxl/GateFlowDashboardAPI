@@ -1,39 +1,25 @@
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace GateFlowDashboardAPI.Utilities;
-
-public class GlobalExceptionFilter : IExceptionFilter
+namespace GateFlowDashboardAPI.Utilities
 {
-    public void OnException(ExceptionContext context)
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using System.Net;
+    public class GlobalExceptionFilter : IExceptionFilter
     {
-        if (context.Exception is InvalidOperationException invalidOperationException)
+        public void OnException(ExceptionContext context)
         {
-            // Handling InvalidOperationException
-            // Extracting the custom message from the exception
-            string customMessage = invalidOperationException.Message;
-
-            // Returning a BadRequest response with the custom message
-            context.Result = new BadRequestObjectResult(new { message = "Invalid operation: " + customMessage });
-        }
-        else
-        {
-            // Handling other exceptions
-            // For example, logging the exception and returning an InternalServerError response
-
-            context.Result = new ObjectResult("An error occurred.")
+            if (context.Exception is InvalidOperationException invalidOperationException)
             {
-                StatusCode = (int)HttpStatusCode.InternalServerError
-            };
+                string customMessage = invalidOperationException.Message;
+                context.Result = new BadRequestObjectResult(new { message = "Invalid operation: " + customMessage });
+            }
+            else
+            {
+                context.Result = new ObjectResult("An error occurred.")
+                {
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                };
+            }
+            context.ExceptionHandled = true;
         }
-        context.ExceptionHandled = true;
     }
-}
-
-
-internal class ErrorResponse : ModelStateDictionary
-{
-    public string Message { get; set; }
 }

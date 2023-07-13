@@ -1,7 +1,8 @@
-using GateFlowDashboardAPI.EFCore.Models;
+namespace GateFlowDashboardAPI.Models.Request
+{
+    using GateFlowDashboardAPI.EFCore.Models;
+    public class SimulationDataRequest : SensorEvent
+    {
 
-namespace GateFlowDashboardAPI.Models.Request;
-
-public class SimulationDataRequest: SensorEvent{
-
+    }
 }

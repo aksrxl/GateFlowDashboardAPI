@@ -1,40 +1,37 @@
-using GateFlowDashboardAPI.BusinessLogic.Implementations;
 using GateFlowDashboardAPI.BusinessLogic.Contract;
-using GateFlowDashboardAPI.EFCore;
-using Microsoft.EntityFrameworkCore;
+using GateFlowDashboardAPI.BusinessLogic.Implementations;
 using GateFlowDashboardAPI.DataAccess.IRepository;
 using GateFlowDashboardAPI.DataAccess.Repository;
-using System.Reflection;
+using GateFlowDashboardAPI.EFCore;
 using GateFlowDashboardAPI.Utilities;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
-builder.Services.AddControllers(c=>c.Filters.Add<GlobalExceptionFilter>());
+builder.Services.AddControllers(c => c.Filters.Add<GlobalExceptionFilter>());
 builder.Services.AddDbContext<ApiContext>(x => x.UseInMemoryDatabase("MyDatabase"));
 builder.Services.AddEndpointsApiExplorer();
 
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-builder.Services.AddSwaggerGen(a=>a.IncludeXmlComments(xmlPath));
+builder.Services.AddSwaggerGen(a => a.IncludeXmlComments(xmlPath));
+
 builder.Services.AddScoped<IGateFlow, GateFlow>();
-builder.Services.AddScoped<ISensorEventRepository,SensorEventRepository>();
+builder.Services.AddScoped<ISensorEventRepository, SensorEventRepository>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-    options.RoutePrefix = string.Empty;
-});
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
+    });
 }
 
 //Seed DataLogic

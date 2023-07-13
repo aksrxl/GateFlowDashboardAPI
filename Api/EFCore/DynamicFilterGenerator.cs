@@ -1,80 +1,58 @@
-namespace GateFlowDashboardAPI.EFCore;
-
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-
-public static class DynamicFilterGenerator
+namespace GateFlowDashboardAPI.EFCore
 {
-    public static Expression<Func<T, bool>> GenerateFilterExpression<T>(Dictionary<string, List<string>> filterParams)
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+
+    public static class DynamicFilterGenerator
     {
-        var parameter = Expression.Parameter(typeof(T), "x");
-        Expression filterExpression = null;
-
-        if (filterParams != null && filterParams.Count > 0)
+        public static Expression<Func<T, bool>> GenerateFilterExpression<T>(Dictionary<string, List<string>> filterParams)
         {
-            foreach (var filterParam in filterParams)
+            var parameter = Expression.Parameter(typeof(T), "x");
+            Expression filterExpression = null;
+
+            if (filterParams != null && filterParams.Count > 0)
             {
-                string columnName = filterParam.Key;
-                List<string> filterValues = filterParam.Value;
-
-                var propertyName = typeof(T).GetProperty(columnName);
-                if (propertyName == null)
+                foreach (var filterParam in filterParams)
                 {
-                    // Skip the filter if the column name is not valid
-                   throw new InvalidOperationException($"Invalid column name {columnName}");
-                }
+                    string columnName = filterParam.Key;
+                    List<string> filterValues = filterParam.Value;
 
-                var property = Expression.Property(parameter, columnName);
+                    var propertyName = typeof(T).GetProperty(columnName) ?? throw new InvalidOperationException($"Invalid column name {columnName}");
+                    var property = Expression.Property(parameter, columnName);
 
-                if (typeof(DateTime).IsAssignableFrom(property.Type) && filterValues.Count == 2)
-                {
-                    if (DateTime.TryParse(filterValues[0], out var startDate) && DateTime.TryParse(filterValues[1], out var endDate))
+                    if (typeof(DateTime).IsAssignableFrom(property.Type) && filterValues.Count == 2)
                     {
-                        var startExpression = Expression.GreaterThanOrEqual(property, Expression.Constant(startDate.Date));
-                        var endExpression = Expression.LessThanOrEqual(property, Expression.Constant(endDate.Date.AddDays(1).AddSeconds(-1)));
-
-                        var dateExpression = Expression.AndAlso(startExpression, endExpression);
-
-                        filterExpression = filterExpression == null ? dateExpression : Expression.AndAlso(filterExpression, dateExpression);
-                    }
-                }
-                else
-                {
-                    Expression columnExpression = null;
-
-                    foreach (var filterValue in filterValues)
-                    {
-                        var equals = Expression.Equal(property, Expression.Constant(filterValue));
-
-                        if (columnExpression == null)
+                        if (DateTime.TryParse(filterValues[0], out var startDate) && DateTime.TryParse(filterValues[1], out var endDate))
                         {
-                            columnExpression = equals;
-                        }
-                        else
-                        {
-                            columnExpression = Expression.OrElse(columnExpression, equals);
+                            var startExpression = Expression.GreaterThanOrEqual(property, Expression.Constant(startDate.Date));
+                            var endExpression = Expression.LessThanOrEqual(property, Expression.Constant(endDate.Date.AddDays(1).AddSeconds(-1)));
+                            var dateExpression = Expression.AndAlso(startExpression, endExpression);
+                            filterExpression = filterExpression == null ? dateExpression : Expression.AndAlso(filterExpression, dateExpression);
                         }
                     }
-
-                    filterExpression = filterExpression == null ? columnExpression : Expression.AndAlso(filterExpression, columnExpression);
+                    else
+                    {
+                        Expression columnExpression = null;
+                        foreach (var filterValue in filterValues)
+                        {
+                            var equals = Expression.Equal(property, Expression.Constant(filterValue));
+                            if (columnExpression == null)
+                                columnExpression = equals;
+                            else
+                                columnExpression = Expression.OrElse(columnExpression, equals);
+                        }
+                        filterExpression = filterExpression == null ? columnExpression : Expression.AndAlso(filterExpression, columnExpression);
+                    }
                 }
             }
-        }
-        else
-        {
             // Default to a true expression if filterParams is null or empty
-            filterExpression = Expression.Constant(true);
+            else
+                filterExpression = Expression.Constant(true);
+
+            var lambda = Expression.Lambda<Func<T, bool>>(filterExpression, parameter);
+
+            return lambda;
         }
-
-        var lambda = Expression.Lambda<Func<T, bool>>(filterExpression, parameter);
-
-        return lambda;
     }
 }
-
-
-
-
-
-

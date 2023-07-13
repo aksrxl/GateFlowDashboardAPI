@@ -1,28 +1,29 @@
-namespace GateFlowDashboardAPI.DataAccess.Repository;
-
-using GateFlowDashboardAPI.DataAccess.IRepository;
-using GateFlowDashboardAPI.EFCore;
-using GateFlowDashboardAPI.EFCore.Models;
-using System.Linq;
-using System.Threading.Tasks;
-
-public class SensorEventRepository : ISensorEventRepository
+namespace GateFlowDashboardAPI.DataAccess.Repository
 {
-    private readonly ApiContext _apiContext;
-    public SensorEventRepository(ApiContext apiContext)
-    {
-        _apiContext = apiContext;
-    }
+    using GateFlowDashboardAPI.DataAccess.IRepository;
+    using GateFlowDashboardAPI.EFCore;
+    using GateFlowDashboardAPI.EFCore.Models;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-    public IQueryable<SensorEvent> GetAllSensorEvents()
+    public class SensorEventRepository : ISensorEventRepository
     {
-        return _apiContext.SensorEvent.AsQueryable();
-    }
+        private readonly ApiContext _apiContext;
+        public SensorEventRepository(ApiContext apiContext)
+        {
+            _apiContext = apiContext;
+        }
 
-    public async Task<string> SaveSensorEvent(SensorEvent sensorEvent)
-    {
-       var entity =await _apiContext.SensorEvent.AddAsync(sensorEvent);
-       await _apiContext.SaveChangesAsync();
-       return entity.Entity.Id;
+        public IQueryable<SensorEvent> GetAllSensorEvents()
+        {
+            return _apiContext.SensorEvent.AsQueryable();
+        }
+
+        public async Task<string> SaveSensorEvent(SensorEvent sensorEvent)
+        {
+            var entity = await _apiContext.SensorEvent.AddAsync(sensorEvent);
+            await _apiContext.SaveChangesAsync();
+            return entity.Entity.Id;
+        }
     }
 }
