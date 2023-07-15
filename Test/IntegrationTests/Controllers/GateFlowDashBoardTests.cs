@@ -45,7 +45,7 @@ namespace GateFlowDashboardAPIInitegrationTests.Controllers
             var validKey = "Gate";
 
             // Act
-            var response = await _client.GetAsync($"https://localhost:7101/GetGateFlowSummary?{validKey}=Gate A");
+            var response = await _client.GetAsync($"/GetGateFlowSummary?{validKey}=Gate A");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -62,7 +62,7 @@ namespace GateFlowDashboardAPIInitegrationTests.Controllers
             var invalidKey = "SomeInvalidKey";
 
             // Act
-            var response = await _client.GetAsync($"https://localhost:7101/GetGateFlowSummary?{invalidKey}=Gate A");
+            var response = await _client.GetAsync($"/GetGateFlowSummary?{invalidKey}=Gate A");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
