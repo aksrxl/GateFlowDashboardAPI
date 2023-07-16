@@ -27,7 +27,6 @@ namespace GateFlowDashboardAPI.Extensions
             var isValid = Enum.TryParse<TEnum>(value, out _);
             if (!isValid)
             {
-
                 var enums = Enum.GetNames(typeof(Type));
                 var message = $"{value} is not a valid value for type.Possible values are '{string.Join("/", enums)}'";
                 logger.LogError(DefaultLogger, correlationId, DateTime.UtcNow, message);

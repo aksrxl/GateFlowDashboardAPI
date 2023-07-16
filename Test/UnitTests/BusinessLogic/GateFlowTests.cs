@@ -11,7 +11,6 @@ namespace GateFlowDashboardAPIUnitTests.BusinessLogic
 {
     public class GateFlowTests
     {
-
         private GateFlow _gateFlow;
         private Mock<ISensorEventRepository> _mockSensorEventRepository;
         private Mock<ILogger<GateFlow>> _mockLogger;
@@ -87,7 +86,6 @@ namespace GateFlowDashboardAPIUnitTests.BusinessLogic
             var sensorEventRepositoryMock = new Mock<ISensorEventRepository>();
             var asyncSensorEvents = new TestAsyncEnumerable<SensorEvent>(sensorEvents);
             var sensorEventsQueryable = asyncSensorEvents.AsQueryable();
-
             _mockSensorEventRepository.Setup(repo => repo.GetAllSensorEvents(It.IsAny<string>())).Returns(sensorEventsQueryable);
 
             // Act
@@ -115,7 +113,6 @@ namespace GateFlowDashboardAPIUnitTests.BusinessLogic
               Times.Never, "Expected Info 'Finished GetGateFlowSummary call.' to be logged exactly once.");
         }
     }
-
 
     #region PrivateMethod
     // TestAsyncEnumerable class implementation for mocking IAsyncEnumerable

@@ -7,7 +7,6 @@ namespace GateFlowDashboardAPI.BusinessLogic.Implementations
     using GateFlowDashboardAPI.Models.Response;
     using Microsoft.EntityFrameworkCore;
     using static Constants;
-
     public class GateFlow : IGateFlow
     {
         private readonly ISensorEventRepository _sensorEventRepository;

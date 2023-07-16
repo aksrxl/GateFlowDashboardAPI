@@ -25,8 +25,7 @@ namespace GateFlowDashboardAPI
                 x.AddConsole();
             });
 
-
-
+            //Swagger xml Comments
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             builder.Services.AddSwaggerGen(a => a.IncludeXmlComments(xmlPath));
@@ -35,8 +34,6 @@ namespace GateFlowDashboardAPI
             builder.Services.AddScoped<ISensorEventRepository, SensorEventRepository>();
 
             var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
