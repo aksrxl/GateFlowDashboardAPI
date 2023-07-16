@@ -23,15 +23,17 @@ Apart from relying on SeedData generated on application startup. The application
 
 ## Debugging Instructions
 * Install [dotnet 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+* Clone Repo
+```
+git clone https://github.com/aksrxl/GateFlowDashboardAPI.git
+```
 ### Visual Studio
-* Clone the Repo.
 * Set GateFlowDashboardAPI as startup project.
 * Run the application.
 * Swagger is available at application home page , depending on ide, it can be tricky based on your launchsetting.json so reach out to url https://localhost:7101/index.html (replace port accordingly).
 * Refer [Invoking endpoints](#invoking-endpoints) section below for more details.
 
 ### Commandline
-* Clone the solutuion
 * Open command prompt and change directory to <u>..GateFlowDashboardAPI\Api</u>
 * runn the following command 
 ```
